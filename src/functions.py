@@ -1,23 +1,19 @@
 import random
-from termcolor import colored
 
 humano_cartas = []
 maquina_cartas = []
-
-humano_puntos = 0
-maquina_puntos = 0
 
 def quien_comienza():
     return random.choice(["el humano", "la maquina"])
 
 def repartir_cartas():
     cartas_total = [
-        colored("1 de espada", "cyan"), colored("2 de espada", "cyan"), colored("3 de espada", "cyan"), colored("4 de espada", "cyan"), colored("5 de espada", "cyan"), colored("6 de espada", "cyan"),
-        colored("7 de espada", "cyan"), colored("10 de espada", "cyan"), colored("11 de espada", "cyan"), colored("12 de espada", "cyan"), colored("1 de copa", "red"), colored("2 de copa", "red"),
-        colored("3 de copa", "red"), colored("4 de copa", "red"), colored("5 de copa", "red"), colored("6 de copa", "red"), colored("7 de copa", "red"), colored("10 de copa", "red"), colored("11 de copa", "red"), 
-        colored("12 de copa", "red"), colored("1 de oro", "yellow"), colored("2 de oro", "yellow"), colored("3 de oro", "yellow"), colored("4 de oro", "yellow"), colored("5 de oro", "yellow"), colored("6 de oro", "yellow"), 
-        colored("7 de oro", "yellow"), colored("10 de oro", "yellow"), colored("11 de oro", "yellow"), colored("12 de oro", "yellow"), colored("1 de basto", "green"), colored("2 de basto", "green"), colored("3 de basto", "green"), 
-        colored("4 de basto", "green"),  colored("5 de basto", "green"), colored("6 de basto", "green"), colored("7 de basto", "green"), colored("10 de basto", "green"), colored("11 de basto", "green"), colored("12 de basto", "green")
+        "1 de espada", "2 de espada", "3 de espada", "4 de espada", "5 de espada", "6 de espada",
+        "7 de espada", "10 de espada", "11 de espada", "12 de espada", "1 de copa", "2 de copa",
+        "3 de copa", "4 de copa", "5 de copa", "6 de copa", "7 de copa", "10 de copa", "11 de copa",
+        "12 de copa", "1 de oro", "2 de oro", "3 de oro", "4 de oro", "5 de oro", "6 de oro",
+        "7 de oro", "10 de oro", "11 de oro", "12 de oro", "1 de basto", "2 de basto", "3 de basto",
+        "4 de basto", "5 de basto", "6 de basto", "7 de basto", "10 de basto", "11 de basto", "12 de basto"
     ]
     for i in range(3):
         carta_humano = cartas_total.pop(random.randint(0, len(cartas_total)-1))
@@ -60,9 +56,9 @@ def comparar_cartas(carta1, carta2):
     valor_carta2 = orden_cartas[carta2]
     
     if  valor_carta1 < valor_carta2:
-        return f'{carta1} gana sobre {carta2}'
+        return carta1
     elif  valor_carta1 > valor_carta2:
-        return f'{carta2} gana sobre {carta1}'
+        return carta2
     else:
         return "Las cartas son iguales"
 
