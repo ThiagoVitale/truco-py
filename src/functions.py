@@ -34,7 +34,7 @@ class JuegoDeTruco:
 
     def get_image_path(self, carta):
         directory = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(directory, "images", f"{carta.replace(' ', '_')}.jpg")
+        image_path = os.path.join(directory, "images", f"{carta.replace(" ", "_")}.jpg")
         return image_path
 
     def display_cartas(self):
