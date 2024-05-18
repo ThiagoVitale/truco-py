@@ -12,12 +12,12 @@ class JuegoDeTruco:
         self.maquina_puntos = 0
         self.turno_actual = ""
         self.cartas_total = [
-            "1 de espada", "2 de espada", "3 de espada", "4 de espada", "5 de espada", "6 de espada",
-            "7 de espada", "10 de espada", "11 de espada", "12 de espada", "1 de copa", "2 de copa",
-            "3 de copa", "4 de copa", "5 de copa", "6 de copa", "7 de copa", "10 de copa", "11 de copa",
-            "12 de copa", "1 de oro", "2 de oro", "3 de oro", "4 de oro", "5 de oro", "6 de oro",
-            "7 de oro", "10 de oro", "11 de oro", "12 de oro", "1 de basto", "2 de basto", "3 de basto",
-            "4 de basto", "5 de basto", "6 de basto", "7 de basto", "10 de basto", "11 de basto", "12 de basto"
+            "1_de_espada", "2_de_espada", "3_de_espada", "4_de_espada", "5_de_espada", "6_de_espada",
+            "7_de_espada", "10_de_espada", "11_de_espada", "12_de_espada", "1_de_copa", "2_de_copa",
+            "3_de_copa", "4_de_copa", "5_de_copa", "6_de_copa", "7_de_copa", "10_de_copa", "11_de_copa",
+            "12_de_copa", "1_de_oro", "2_de_oro", "3_de_oro", "4_de_oro", "5_de_oro", "6_de_oro",
+            "7_de_oro", "10_de_oro", "11_de_oro", "12_de_oro", "1_de_basto", "2_de_basto", "3_de_basto",
+            "4_de_basto", "5_de_basto", "6_de_basto", "7_de_basto", "10_de_basto", "11_de_basto", "12_de_basto"
         ]
         self.setup_gui()
 
@@ -34,7 +34,7 @@ class JuegoDeTruco:
 
     def get_image_path(self, carta):
         directory = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(directory, "images", f"{carta.replace(" ", "_")}.jpg")
+        image_path = os.path.join(directory, "images", f"{carta}.jpg")
         return image_path
 
     def display_cartas(self):
@@ -50,10 +50,27 @@ class JuegoDeTruco:
                 button.pack(side="left")
             else:
                 messagebox.showerror("Error", f"Image not found: {image_path}")
+        
+        for widget in self.maquina_frame.winfo_children():
+            widget.destroy()
+        for i in range(3):
+            image_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images", "red_back.jpg")
+            if os.path.exists(image_path):
+                image = Image.open(image_path)
+                image = ImageTk.PhotoImage(image.resize((100, 150)))
+                button = tk.Button(self.maquina_frame, image=image)
+                button.image = image  
+                button.pack(side="left")
+            else:
+                messagebox.showerror("Error", f"Image not found: {image_path}")
 
     def jugar_carta(self, carta):
         if self.turno_actual == "el humano":
             self.humano_cartas.remove(carta)
+            for button in self.humano_frame.winfo_children():
+                if button.cget("text") == carta:
+                    button.destroy()
+                    break
             carta_2 = self.solicitar_carta_maquina()
             ganador_ronda = self.comparar_cartas(carta, carta_2)
             self.process_result(ganador_ronda)
@@ -67,22 +84,23 @@ class JuegoDeTruco:
     def solicitar_carta_maquina(self):
         carta_a_tirar_maquina = random.choice(self.maquina_cartas)
         self.maquina_cartas.remove(carta_a_tirar_maquina)
-        messagebox.showinfo("Turno de la maquina", f"La maquina tiró {carta_a_tirar_maquina}")
+        self.maquina_cartas.append(None)  # Placeholder for the played card
+        self.display_cartas()  # Update display after playing card
         return carta_a_tirar_maquina
 
     def comparar_cartas(self, carta1, carta2):
         orden_cartas = {
-            "1 de espada": 1, "1 de basto": 2, "7 de espada": 3, "7 de oro": 4,
-            "3 de espada": 5, "3 de copa": 5, "3 de oro": 5, "3 de basto": 5,
-            "2 de espada": 6, "2 de copa": 6, "2 de oro": 6, "2 de basto": 6,
-            "1 de copa": 7, "1 de oro": 7,
-            "12 de espada": 8, "12 de copa": 8, "12 de oro": 8, "12 de basto": 8,
-            "11 de espada": 9, "11 de copa": 9, "11 de oro": 9, "11 de basto": 9,
-            "10 de espada": 10, "10 de copa": 10, "10 de oro": 10, "10 de basto": 10,
-            "7 de basto": 11, "7 de copa": 11,
-            "6 de espada": 12, "6 de copa": 12, "6 de oro": 12, "6 de basto": 12,
-            "5 de espada": 13, "5 de copa": 13, "5 de oro": 13, "5 de basto": 13,
-            "4 de espada": 14, "4 de copa": 14, "4 de oro": 14, "4 de basto": 14
+            "1_de_espada": 1, "1_de_basto": 2, "7_de_espada": 3, "7_de_oro": 4,
+            "3_de_espada": 5, "3_de_copa": 5, "3_de_oro": 5, "3_de_basto": 5,
+            "2_de_espada": 6, "2_de_copa": 6, "2_de_oro": 6, "2_de_basto": 6,
+            "1_de_copa": 7, "1_de_oro": 7,
+            "12_de_espada": 8, "12_de_copa": 8, "12_de_oro": 8, "12_de_basto": 8,
+            "11_de_espada": 9, "11_de_copa": 9, "11_de_oro": 9, "11_de_basto": 9,
+            "10_de_espada": 10, "10_de_copa": 10, "10_de_oro": 10, "10_de_basto": 10,
+            "7_de_basto": 11, "7_de_copa": 11,
+            "6_de_espada": 12, "6_de_copa": 12, "6_de_oro": 12, "6_de_basto": 12,
+            "5_de_espada": 13, "5_de_copa": 13, "5_de_oro": 13, "5_de_basto": 13,
+            "4_de_espada": 14, "4_de_copa": 14, "4_de_oro": 14, "4_de_basto": 14
         }
 
         valor_carta1 = orden_cartas[carta1]
@@ -117,40 +135,34 @@ class JuegoDeTruco:
             self.humano_puntos = 0
             self.maquina_puntos = 0
             self.cartas_total = [
-                "1 de espada", "2 de espada", "3 de espada", "4 de espada", "5 de espada", "6 de espada",
-                "7 de espada", "10 de espada", "11 de espada", "12 de espada", "1 de copa", "2 de copa",
-                "3 de copa", "4 de copa", "5 de copa", "6 de copa", "7 de copa", "10 de copa", "11 de copa",
-                "12 de copa", "1 de oro", "2 de oro", "3 de oro", "4 de oro", "5 de oro", "6 de oro",
-                "7 de oro", "10 de oro", "11 de oro", "12 de oro", "1 de basto", "2 de basto", "3 de basto",
-                "4 de basto", "5 de basto", "6 de basto", "7 de basto", "10 de basto", "11 de basto", "12 de basto"
+                "1_de_espada", "2_de_espada", "3_de_espada", "4_de_espada", "5_de_espada", "6_de_espada",
+                "7_de_espada", "10_de_espada", "11_de_espada", "12_de_espada", "1_de_copa", "2_de_copa",
+                "3_de_copa", "4_de_copa", "5_de_copa", "6_de_copa", "7_de_copa", "10_de_copa", "11_de_copa",
+                "12_de_copa", "1_de_oro", "2_de_oro", "3_de_oro", "4_de_oro", "5_de_oro", "6_de_oro",
+                "7_de_oro", "10_de_oro", "11_de_oro", "12_de_oro", "1_de_basto", "2_de_basto", "3_de_basto",
+                "4_de_basto", "5_de_basto", "6_de_basto", "7_de_basto", "10_de_basto", "11_de_basto", "12_de_basto"
             ]
             self.repartir_cartas()
 
     def setup_gui(self):
         self.root = tk.Tk()
         self.root.title("Juego de Truco")
+
+        self.maquina_frame = tk.Frame(self.root)
+        self.maquina_frame.pack(pady=20)
+
+        self.played_frame = tk.Frame(self.root)
+        self.played_frame.pack(pady=20)
+
         self.humano_frame = tk.Frame(self.root)
         self.humano_frame.pack(pady=20)
+
         self.puntos_label = tk.Label(self.root, text="Puntos humano: 0  Puntos maquina: 0")
         self.puntos_label.pack()
+
         self.repartir_cartas()
+
         self.root.mainloop()
 
-        def get_image_path(carta):
-            directory = os.path.dirname(os.path.abspath(__file__))
-            image_path = os.path.join(directory, "images", f"{carta.replace(' ', '_')}.png")
-            return image_path
-
-        def display_cartas(self):
-            for widget in self.humano_frame.winfo_children():
-                widget.destroy()
-            for carta in self.humano_cartas:
-                image_path = get_image_path(carta)
-                if os.path.exists(image_path):
-                    image = Image.open(image_path)
-                    image = ImageTk.PhotoImage(image.resize((100, 150)))
-                    button = tk.Button(self.humano_frame, image=image, command=lambda c=carta: self.jugar_carta(c))
-                    button.image = image  
-                    button.pack(side="left")
-                else:
-                    messagebox.showerror("Error", f"Image not found: {image_path}")
+if __name__ == "__main__":
+    juego = JuegoDeTruco()
