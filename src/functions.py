@@ -48,7 +48,7 @@ class JuegoDeTruco:
                 image = ImageTk.PhotoImage(image.resize((100, 150)))
                 button = tk.Button(self.humano_frame, image=image, command=lambda c=carta: self.jugar_carta(c))
                 button.image = image  
-                button.pack(side="left")
+                button.pack(side="left", padx=10)  # Añadir espacio horizontal entre las cartas
             else:
                 tk.messagebox.showerror("Error", f"Image not found: {image_path}")
         
@@ -61,7 +61,7 @@ class JuegoDeTruco:
                 image = ImageTk.PhotoImage(image.resize((100, 150)))
                 label = tk.Label(self.maquina_frame, image=image)
                 label.image = image  
-                label.pack(side="left")
+                label.pack(side="left", padx=10)  # Añadir espacio horizontal entre las cartas
             else:
                 tk.messagebox.showerror("Error", f"Image not found: {image_path}")
 
@@ -104,11 +104,11 @@ class JuegoDeTruco:
 
             label_humano = tk.Label(self.played_frame, image=humano_image)
             label_humano.image = humano_image
-            label_humano.pack(side="left")
+            label_humano.pack(side="left", padx=10)  # Añadir espacio horizontal entre las cartas en juego
 
             label_maquina = tk.Label(self.played_frame, image=maquina_image)
             label_maquina.image = maquina_image
-            label_maquina.pack(side="left")
+            label_maquina.pack(side="left", padx=10)  # Añadir espacio horizontal entre las cartas en juego
         else:
             tk.messagebox.showerror("Error", f"Images not found: {humano_image_path} or {maquina_image_path}")
 
@@ -171,20 +171,21 @@ class JuegoDeTruco:
     def setup_gui(self):
         self.root = tk.Tk()
         self.root.title("Juego de Truco")
+        self.root.configure(bg='#228B22')  # Verde billar
 
-        self.turno_label = tk.Label(self.root, text="Comienza: ")
+        self.turno_label = tk.Label(self.root, text="Comienza: ", fg='black', bg='#228B22')
         self.turno_label.pack(anchor="nw")
 
-        self.maquina_frame = tk.Frame(self.root)
+        self.maquina_frame = tk.Frame(self.root, bg='#228B22')
         self.maquina_frame.pack(pady=20)
 
-        self.played_frame = tk.Frame(self.root)
+        self.played_frame = tk.Frame(self.root, bg='#228B22')
         self.played_frame.pack(pady=20)
 
-        self.humano_frame = tk.Frame(self.root)
+        self.humano_frame = tk.Frame(self.root, bg='#228B22')
         self.humano_frame.pack(pady=20)
 
-        self.puntos_label = tk.Label(self.root, text="Puntos humano: 0  Puntos maquina: 0")
+        self.puntos_label = tk.Label(self.root, text="Puntos humano: 0  Puntos maquina: 0", fg='black', bg='#228B22')
         self.puntos_label.pack()
 
         self.repartir_cartas()
