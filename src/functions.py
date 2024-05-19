@@ -1,6 +1,5 @@
 import random
 import tkinter as tk
-from tkinter import messagebox
 from PIL import Image, ImageTk 
 import os
 
@@ -20,9 +19,11 @@ class JuegoDeTruco:
             "4_de_basto", "5_de_basto", "6_de_basto", "7_de_basto", "10_de_basto", "11_de_basto", "12_de_basto"
         ]
         self.setup_gui()
+        self.turno_actual = self.quien_comienza()  # Determinar quién comienza el juego
 
     def quien_comienza(self):
         self.turno_actual = random.choice(["el humano", "la maquina"])
+        self.turno_label.config(text=f"Comienza: {self.turno_actual}")
         return self.turno_actual
 
     def repartir_cartas(self):
@@ -49,7 +50,7 @@ class JuegoDeTruco:
                 button.image = image  
                 button.pack(side="left")
             else:
-                messagebox.showerror("Error", f"Image not found: {image_path}")
+                tk.messagebox.showerror("Error", f"Image not found: {image_path}")
         
         for widget in self.maquina_frame.winfo_children():
             widget.destroy()
@@ -58,11 +59,11 @@ class JuegoDeTruco:
             if os.path.exists(image_path):
                 image = Image.open(image_path)
                 image = ImageTk.PhotoImage(image.resize((100, 150)))
-                button = tk.Button(self.maquina_frame, image=image)
-                button.image = image  
-                button.pack(side="left")
+                label = tk.Label(self.maquina_frame, image=image)
+                label.image = image  
+                label.pack(side="left")
             else:
-                messagebox.showerror("Error", f"Image not found: {image_path}")
+                tk.messagebox.showerror("Error", f"Image not found: {image_path}")
 
     def jugar_carta(self, carta):
         if self.turno_actual == "el humano":
@@ -71,22 +72,45 @@ class JuegoDeTruco:
                 if button.cget("text") == carta:
                     button.destroy()
                     break
-            carta_2 = self.solicitar_carta_maquina()
-            ganador_ronda = self.comparar_cartas(carta, carta_2)
+            carta_maquina = self.solicitar_carta_maquina()
+            self.mostrar_carta_en_juego(carta, carta_maquina)
+            ganador_ronda = self.comparar_cartas(carta, carta_maquina)
             self.process_result(ganador_ronda)
             self.turno_actual = "la maquina"
         else:
-            carta_2 = self.solicitar_carta_maquina()
-            ganador_ronda = self.comparar_cartas(carta, carta_2)
+            carta_maquina = self.solicitar_carta_maquina()
+            self.mostrar_carta_en_juego(carta, carta_maquina)
+            ganador_ronda = self.comparar_cartas(carta, carta_maquina)
             self.process_result(ganador_ronda)
             self.turno_actual = "el humano"
 
     def solicitar_carta_maquina(self):
         carta_a_tirar_maquina = random.choice(self.maquina_cartas)
         self.maquina_cartas.remove(carta_a_tirar_maquina)
-        self.maquina_cartas.append(None)  # Placeholder for the played card
-        self.display_cartas()  # Update display after playing card
         return carta_a_tirar_maquina
+
+    def mostrar_carta_en_juego(self, carta_humano, carta_maquina):
+        for widget in self.played_frame.winfo_children():
+            widget.destroy()
+
+        humano_image_path = self.get_image_path(carta_humano)
+        maquina_image_path = self.get_image_path(carta_maquina)
+
+        if os.path.exists(humano_image_path) and os.path.exists(maquina_image_path):
+            humano_image = Image.open(humano_image_path)
+            maquina_image = Image.open(maquina_image_path)
+            humano_image = ImageTk.PhotoImage(humano_image.resize((100, 150)))
+            maquina_image = ImageTk.PhotoImage(maquina_image.resize((100, 150)))
+
+            label_humano = tk.Label(self.played_frame, image=humano_image)
+            label_humano.image = humano_image
+            label_humano.pack(side="left")
+
+            label_maquina = tk.Label(self.played_frame, image=maquina_image)
+            label_maquina.image = maquina_image
+            label_maquina.pack(side="left")
+        else:
+            tk.messagebox.showerror("Error", f"Images not found: {humano_image_path} or {maquina_image_path}")
 
     def comparar_cartas(self, carta1, carta2):
         orden_cartas = {
@@ -115,23 +139,23 @@ class JuegoDeTruco:
     def process_result(self, ganador_ronda):
         if ganador_ronda == "humano":
             self.humano_puntos += 1
-            messagebox.showinfo("Resultado", "Ganaste la ronda")
+            tk.messagebox.showinfo("Resultado", "Ganaste la ronda")
         elif ganador_ronda == "maquina":
             self.maquina_puntos += 1
-            messagebox.showinfo("Resultado", "Ganó la maquina la ronda")
+            tk.messagebox.showinfo("Resultado", "Ganó la maquina la ronda")
         else:
             self.humano_puntos += 1
             self.maquina_puntos += 1
-            messagebox.showinfo("Resultado", "Empate en la ronda")
+            tk.messagebox.showinfo("Resultado", "Empate en la ronda")
         self.update_puntos()
 
     def update_puntos(self):
         self.puntos_label.config(text=f"Puntos humano: {self.humano_puntos}  Puntos maquina: {self.maquina_puntos}")
         if self.humano_puntos >= 2 or self.maquina_puntos >= 2:
             if self.humano_puntos > self.maquina_puntos:
-                messagebox.showinfo("Juego terminado", "¡Ganaste la partida!")
+                tk.messagebox.showinfo("Juego terminado", "¡Ganaste la partida!")
             else:
-                messagebox.showinfo("Juego terminado", "¡Ganó la maquina la partida!")
+                tk.messagebox.showinfo("Juego terminado", "¡Ganó la maquina la partida!")
             self.humano_puntos = 0
             self.maquina_puntos = 0
             self.cartas_total = [
@@ -148,6 +172,9 @@ class JuegoDeTruco:
         self.root = tk.Tk()
         self.root.title("Juego de Truco")
 
+        self.turno_label = tk.Label(self.root, text="Comienza: ")
+        self.turno_label.pack(anchor="nw")
+
         self.maquina_frame = tk.Frame(self.root)
         self.maquina_frame.pack(pady=20)
 
@@ -161,6 +188,7 @@ class JuegoDeTruco:
         self.puntos_label.pack()
 
         self.repartir_cartas()
+        self.turno_actual = self.quien_comienza()  # Mover quien_comienza aquí
 
         self.root.mainloop()
 
